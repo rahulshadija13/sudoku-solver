@@ -12,8 +12,8 @@
  *   board[row][col] holds the digit, 0 means empty.
  *
  * Build and run
- *   g++ -std=c++17 -O2 -o solver backtracking.cpp
- *   ./solver
+ *   g++ -std=c++17 -O2 -o bt backtracking.cpp
+ *   ./bt
  *
  * Output: the puzzle, the solved grid, the number of guesses made, and the
  * solve time. The puzzle is hard-coded in main(); 0 marks an empty cell.
@@ -87,15 +87,15 @@ bool sudokuSolver(vector<vector<int>>& board, int row, int col){
 int main(){
     // 0 = empty cell
         vector<vector<int>> board = {
-        {0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,3,0,8,5},
-        {0,0,1,0,2,0,0,0,0},
-        {0,0,0,5,0,7,0,0,0},
-        {0,0,4,0,0,0,1,0,0},
-        {0,9,0,0,0,0,0,0,0},
-        {5,0,0,0,0,0,0,7,3},
-        {0,0,2,0,1,0,0,0,0},
-        {0,0,0,0,4,0,0,0,9}
+        {0,0,0,0,6,1,0,0,0},
+        {3,0,0,4,0,0,8,0,0},
+        {0,6,0,0,0,3,7,0,0},
+        {5,0,0,7,0,0,0,9,0},
+        {0,4,0,1,9,0,0,2,0},
+        {6,0,0,0,0,0,0,1,0},
+        {4,0,0,9,0,0,5,0,0},
+        {0,0,2,3,0,0,0,7,0},
+        {0,0,0,0,0,0,0,0,0}
     };
 
     for(int i=0; i<9; i++){

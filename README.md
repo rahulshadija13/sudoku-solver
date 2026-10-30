@@ -4,11 +4,11 @@ Two solvers for 9x9 sudoku, written to compare a plain backtracking search with 
 
 ## The two approaches
 
-### Backtracking (`src/backtracking.cpp`)
+### Backtracking (`backtracking.cpp`)
 
 The baseline. Cells are visited left to right, top to bottom. For each empty cell the solver tries the digits 1 to 9 and accepts a digit only if it does not already appear in the same row, column or 3x3 box. If the rest of the board cannot be completed with that digit, the digit is removed and the next one is tried. There are no deductions: every decision is a guess.
 
-### Constraint propagation + backtracking (`src/propagation.cpp`)
+### Constraint propagation + backtracking (`propagation.cpp`)
 
 Every cell keeps a set of candidate digits, and the solver uses logic before it guesses:
 
@@ -24,14 +24,14 @@ When logic alone is not enough, the solver guesses a digit for the empty cell wi
 Requires a C++ compiler such as `g++`.
 
 ```
-g++ -std=c++17 -O2 -o backtracking src/backtracking.cpp
-./backtracking
+g++ -std=c++17 -O2 -o bt src/backtracking.cpp
+./bt
 
-g++ -std=c++17 -O2 -o propagation src/propagation.cpp
-./propagation
+g++ -std=c++17 -O2 -o prop src/propagation.cpp
+./prop
 ```
 
-On Windows, run the executable as `backtracking.exe` (or `.\backtracking.exe` in PowerShell).
+On Windows, run the executable as `bt.exe` (or `.\bt.exe` in PowerShell).
 
 The puzzle is the `board` matrix in `main()`, where `0` marks an empty cell. To try another puzzle, replace the nine rows.
 
@@ -44,7 +44,7 @@ A **guess** is counted each time the solver tries a digit in a cell where it has
 | Sample | 30 | 4208 | 0 | 0.228 ms | 0.041 ms |
 | Low-clue | 23 | 13630 | 3 | 0.827 ms | 0.165 ms |
 | Hard (Arto Inkala) | 21 | 49558 | 172 | 3.052 ms | 3.924 ms |
-| Brute-force killer | 17 | 69175316 | 0 | 3650.678 | 0.11281 |
+| Brute-force killer | 17 | 69175316 | 0 | 3650.678 ms | 0.11281 ms |
 
 Puzzles as 81-digit strings (row by row, `0` = empty):
 
@@ -66,9 +66,9 @@ Guess counts are the same on every machine. Times are not.
 ## Project structure
 
 ```
-src/
-  backtracking.cpp    baseline backtracking solver
-  propagation.cpp     constraint propagation + backtracking solver
+backtracking.cpp    baseline backtracking solver
+propagation.cpp     constraint propagation + backtracking solver
+README.md
 ```
 
 ## Planned improvements

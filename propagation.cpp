@@ -19,8 +19,8 @@
  *   cell 80 is the bottom-right corner.
  *
  * Build and run
- *   g++ -std=c++17 -O2 -o propagation.cpp
- *   ./solver2
+ *   g++ -std=c++17 -O2 -o prop propagation.cpp
+ *   ./prop
  *
  * Output: the solved grid, the number of guesses made, and the solve time.
  * The puzzle is hard-coded in main(); 0 marks an empty cell.
@@ -235,16 +235,16 @@ bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand){
 
 int main(){
     // 0 = empty cell
-    vector<vector<int>> board = {
-        {0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,3,0,8,5},
-        {0,0,1,0,2,0,0,0,0},
-        {0,0,0,5,0,7,0,0,0},
-        {0,0,4,0,0,0,1,0,0},
-        {0,9,0,0,0,0,0,0,0},
-        {5,0,0,0,0,0,0,7,3},
-        {0,0,2,0,1,0,0,0,0},
-        {0,0,0,0,4,0,0,0,9}
+        vector<vector<int>> board = {
+        {0,0,0,0,6,1,0,0,0},
+        {3,0,0,4,0,0,8,0,0},
+        {0,6,0,0,0,3,7,0,0},
+        {5,0,0,7,0,0,0,9,0},
+        {0,4,0,1,9,0,0,2,0},
+        {6,0,0,0,0,0,0,1,0},
+        {4,0,0,9,0,0,5,0,0},
+        {0,0,2,3,0,0,0,7,0},
+        {0,0,0,0,0,0,0,0,0}
     };
     // cand[cell][digit]: all 9 digits are possible everywhere at the start (index 0 unused)
     vector<vector<bool>> cand(81, vector<bool>(10, true));

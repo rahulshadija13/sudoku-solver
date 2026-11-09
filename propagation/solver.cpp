@@ -1,37 +1,19 @@
 /*
  * Sudoku solver: constraint propagation + backtracking search
  *
- * How it works
- *   1. Every cell keeps a set of candidate digits: cand[cell][digit] is true
- *      while that digit is still possible in that cell.
- *   2. propagate() fills every cell the rules force, until nothing changes:
- *        - naked single:  an empty cell with exactly one candidate left
- *        - hidden single: a digit that fits in only one cell of a row,
- *                         column or box
- *      If a cell or a digit has no place left, the board is a dead end.
- *   3. If the puzzle is still unsolved, assign() guesses a digit for the empty
- *      cell with the fewest candidates. The guess is made on a copy of the
- *      board, so a wrong guess is simply thrown away.
+ * Every cell keeps a set of candidate digits (cand[cell][digit]). propagate()
+ * fills the cells that the rules force (naked and hidden singles); when that
+ * is not enough, assign() guesses on the empty cell with the fewest candidates,
+ * using a copy of the board so a wrong guess can be thrown away.
  *
- * Board layout
- *   board[row][col] holds the digit, 0 means empty.
- *   A cell number is row*9 + col, so cell 0 is the top-left corner and
- *   cell 80 is the bottom-right corner.
- *
- * Build and run
- *   g++ -std=c++17 -O2 -o prop propagation.cpp
- *   ./prop
- *
- * Output: the solved grid, the number of guesses made, and the solve time.
- * The puzzle is hard-coded in main(); 0 marks an empty cell.
+ * board[row][col] holds the digit, 0 means empty. A cell number is row*9 + col.
+ * Entry point: solveSudoku() (see solver.h)
  */
 
-#include <iostream>
 #include <vector>
 #include <chrono>
+#include "solver.h"
 using namespace std;
-
-int guesses = 0;    // number of digits tried during the search (0 = solved by logic alone)
 
 // forward declarations (the functions call each other)
 void eliminate(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int col, int tgt);
@@ -39,8 +21,8 @@ bool checkUnit(vector<vector<int>>& board, vector<vector<bool>>& cand, vector<in
 bool hiddenSingle(vector<vector<int>>& board, vector<vector<bool>>& cand, bool& changed);
 bool propagate(vector<vector<int>>& board, vector<vector<bool>>& cand);
 vector<int> findBest(vector<vector<int>>& board, vector<vector<bool>>& cand);
-bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int col);
-bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand);
+bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int col, int& guesses);
+bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand, int& guesses);
 
 // Removes the digits already given in the puzzle from the candidates of their peers
 void traversal(vector<vector<int>>& board, vector<vector<bool>>& cand){
@@ -202,7 +184,8 @@ vector<int> findBest(vector<vector<int>>& board, vector<vector<bool>>& cand){
 
 // Guesses each candidate of cell (row, col) in turn, on a copy of the board.
 // A failed guess is discarded; a successful one is copied back into board.
-bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int col){
+// guesses counts every digit tried.
+bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int col, int& guesses){
     for(int d=1; d<=9; d++){
         if(cand[row*9 + col][d]){
             guesses++;
@@ -210,7 +193,7 @@ bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int
             vector<vector<bool>> candid = cand;
             next[row][col] = d;
             eliminate(next, candid, row, col, d);
-            if(solve(next, candid)){
+            if(solve(next, candid, guesses)){
                 board = next;      // success: pass the solution back up
                 cand = candid;
                 return true;
@@ -222,7 +205,7 @@ bool assign(vector<vector<int>>& board, vector<vector<bool>>& cand, int row, int
 
 // Propagate first, then guess only if the puzzle is still unsolved.
 // Returns true if board is now completely solved.
-bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand){
+bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand, int& guesses){
     if(!propagate(board, cand)){
         return false;
     }
@@ -230,42 +213,33 @@ bool solve(vector<vector<int>>& board, vector<vector<bool>>& cand){
     if(best.empty()){
         return true;               // no empty cells left -> solved
     }
-    return assign(board, cand, best[0], best[1]);
+    return assign(board, cand, best[0], best[1], guesses);
 }
 
-int main(){
-    // 0 = empty cell
-        vector<vector<int>> board = {
-        {0,0,0,0,6,1,0,0,0},
-        {3,0,0,4,0,0,8,0,0},
-        {0,6,0,0,0,3,7,0,0},
-        {5,0,0,7,0,0,0,9,0},
-        {0,4,0,1,9,0,0,2,0},
-        {6,0,0,0,0,0,0,1,0},
-        {4,0,0,9,0,0,5,0,0},
-        {0,0,2,3,0,0,0,7,0},
-        {0,0,0,0,0,0,0,0,0}
-    };
+// Public entry point: solves a copy of the puzzle and reports guesses and time.
+// The guess counter lives here, so every call starts from 0.
+SolveResult solveSudoku(const vector<vector<int>>& puzzle){
+    vector<vector<int>> board = puzzle;
     // cand[cell][digit]: all 9 digits are possible everywhere at the start (index 0 unused)
     vector<vector<bool>> cand(81, vector<bool>(10, true));
+    int guesses = 0;
 
     auto start = chrono::steady_clock::now();
 
     traversal(board, cand);
-    bool ok = solve(board, cand);
+    bool ok = solve(board, cand, guesses);
 
     auto end = chrono::steady_clock::now();
     chrono::duration<double, milli> ms = end - start;
 
+    SolveResult result;
+    result.solved = ok;
     if(ok){
-        for(int i=0; i<9; i++){
-            for(int j=0; j<9; j++) cout << board[i][j] << " ";
-            cout << "\n";
-        }
+        result.board = board;
     } else {
-        cout << "No solution\n";
+        result.board = puzzle;     // unsolved: give the original puzzle back
     }
-    cout << "guesses: " << guesses << "\n";
-    cout << "time: " << ms.count() << " ms\n";
-    return 0;
+    result.guesses = guesses;
+    result.timeMs = ms.count();
+    return result;
 }

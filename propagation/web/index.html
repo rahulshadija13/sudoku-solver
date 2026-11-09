@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sudoku Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <h1>Sudoku Solver</h1>
+        <p class="subtitle">Enter a puzzle and the C++ solver (constraint propagation + backtracking) solves it.</p>
+
+        <!-- the 81 input boxes are created by script.js -->
+        <div id="grid"></div>
+
+        <div id="message" class="message" role="status"></div>
+
+        <div class="buttons">
+            <button id="solveBtn">Solve</button>
+            <button id="resetBtn" class="secondary" title="Remove the solver's digits and bring back your puzzle">Reset</button>
+            <button id="clearBtn" class="secondary" title="Empty the whole grid">Clear</button>
+        </div>
+
+        <div class="examples">
+            <label for="examples">Examples</label>
+            <select id="examples">
+                <option value="">Load a puzzle...</option>
+                <option value="sample">Sample (30 clues)</option>
+                <option value="lowclue">Low-clue (23 clues)</option>
+                <option value="hard">Hard, Arto Inkala (21 clues)</option>
+                <option value="killer">Brute-force killer (17 clues)</option>
+            </select>
+        </div>
+
+        <div id="stats" class="hidden" role="status">
+            <div class="stats">
+                <div class="stat">
+                    <span class="value" id="statTime">-</span>
+                    <span class="label">Solve time</span>
+                </div>
+                <div class="stat">
+                    <span class="value" id="statGuesses">-</span>
+                    <span class="label">Guesses</span>
+                </div>
+            </div>
+            <p class="note">Measured inside the C++ solver, not including network time.</p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

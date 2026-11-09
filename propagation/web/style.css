@@ -1,0 +1,249 @@
+:root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --text: #1d2330;
+    --muted: #667085;
+    --line: #c9ced8;
+    --line-strong: #1d2330;
+    --accent: #2f6fed;
+    --accent-text: #ffffff;
+    --focus-bg: #e7efff;
+    --conflict-bg: #fde4e4;
+    --conflict-text: #c0262d;
+    --solved-text: #2f6fed;
+    --success-bg: #e3f6ea;
+    --success-text: #176b3a;
+    --error-bg: #fde4e4;
+    --error-text: #a3201f;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #15181f;
+        --surface: #1e222b;
+        --text: #e8eaf0;
+        --muted: #9aa3b2;
+        --line: #3a4150;
+        --line-strong: #aab3c5;
+        --accent: #5b8cff;
+        --accent-text: #0d1220;
+        --focus-bg: #2a3550;
+        --conflict-bg: #4a2326;
+        --conflict-text: #ff8f94;
+        --solved-text: #7ea6ff;
+        --success-bg: #17382a;
+        --success-text: #7fdca6;
+        --error-bg: #4a2326;
+        --error-text: #ffb3b6;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+main {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+}
+
+h1 {
+    margin: 0 0 4px;
+    font-size: 1.8rem;
+}
+
+.subtitle {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* the 9x9 grid */
+#grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 3px solid var(--line-strong);
+    background: var(--surface);
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: clamp(1.1rem, 5.5vw, 1.8rem);
+    font-weight: 600;
+    text-align: center;
+    caret-color: transparent;
+}
+
+/* thicker lines between the 3x3 boxes */
+.cell.right-border {
+    border-right: 3px solid var(--line-strong);
+}
+
+.cell.bottom-border {
+    border-bottom: 3px solid var(--line-strong);
+}
+
+.cell:nth-child(9n) {
+    border-right: 0;
+}
+
+.cell:nth-child(n+73) {
+    border-bottom: 0;
+}
+
+.cell:focus {
+    outline: none;
+    background: var(--focus-bg);
+    box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.cell.conflict {
+    background: var(--conflict-bg);
+    color: var(--conflict-text);
+}
+
+.cell.solved-digit {
+    color: var(--solved-text);
+    font-weight: 400;
+}
+
+.cell[readonly] {
+    cursor: default;
+}
+
+/* messages */
+.message {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.message:empty {
+    display: none;
+}
+
+.message.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+}
+
+.message.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+/* buttons */
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+button {
+    flex: 1;
+    padding: 10px 18px;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button.secondary {
+    background: transparent;
+    color: var(--accent);
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+button:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* example puzzles */
+.examples {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+select {
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+}
+
+/* solve time and guesses */
+#stats {
+    margin-top: 16px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.stat {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    text-align: center;
+}
+
+.stat .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat .label {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.note {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}

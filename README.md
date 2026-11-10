@@ -2,7 +2,7 @@
 
 Two solvers for 9x9 sudoku, written to compare a plain backtracking search with constraint propagation. Both print the solved grid, the number of guesses they needed, and the solve time, so they can be compared on the same puzzle. The propagation solver is also available as a web app.
 
-**Live demo:** https://YOUR-SERVICE.onrender.com
+**Live demo:** https://sudoku-solver-4neo.onrender.com/
 
 The demo runs on a free plan: it sleeps when nobody is using it, so the first load can take up to a minute, and solve times are slower than in the table below, which was measured on a laptop. Guess counts are the same everywhere.
 
